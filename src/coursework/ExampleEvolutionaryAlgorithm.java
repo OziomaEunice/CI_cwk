@@ -125,6 +125,7 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 			participants.add(population.get(Parameters.random.nextInt(Parameters.popSize)));
 		}
 		
+		
 		// find the fittest individual
 		// and if the individual (or participant) has the fittest 
 		// chromosome, select it
