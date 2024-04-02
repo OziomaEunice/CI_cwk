@@ -42,11 +42,11 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 			 */
 
 			// Select 2 Individuals from the current population. Currently returns random Individual
-			Individual parent1 = select(); 
-			Individual parent2 = select();
+			Individual parent1 = tournamentSelect(); 
+			Individual parent2 = tournamentSelect();
 
 			// Generate a child by crossover. Not Implemented			
-			ArrayList<Individual> children = reproduce(parent1, parent2);			
+			ArrayList<Individual> children = uniformCrossover(parent1, parent2);			
 			
 			//mutate the offspring
 			mutate(children);
@@ -115,24 +115,43 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 	}
 
 	/**
-	 * Selection --
-	 * 
-	 * NEEDS REPLACED with proper selection this just returns a copy of a random
-	 * member of the population
+	 * SELECTION -- using the Tournament selection
 	 */
-	private Individual select() {		
-		Individual parent = population.get(Parameters.random.nextInt(Parameters.popSize));
-		return parent.copy();
+	private Individual tournamentSelect() {		
+		// select the parents individuals (which are participants) from the population
+		// and perform a tournament amongst them
+		ArrayList<Individual> participants = new ArrayList<>();
+		for(int i = 0; i < Parameters.popSize; i++) {
+			participants.add(population.get(Parameters.random.nextInt(Parameters.popSize)));
+		}
+		
+		// find the fittest individual
+		// and if the individual (or participant) has the fittest 
+		// chromosome, select it
+		Individual fittest = null;
+		for(Individual participant : participants) {
+			if(fittest == null || participant.fitness < fittest.fitness) {
+				fittest = participant;
+			}
+		}
+		
+		return fittest.copy(); // return a copy of the fittest individual
 	}
 
 	/**
-	 * Crossover / Reproduction
-	 * 
-	 * NEEDS REPLACED with proper method this code just returns exact copies of the
-	 * parents. 
+	 * CROSSOVER / REPRODUCTION
 	 */
-	private ArrayList<Individual> reproduce(Individual parent1, Individual parent2) {
+	private ArrayList<Individual> uniformCrossover(Individual parent1, Individual parent2) {
+		// create a list to store the offspring (children)
 		ArrayList<Individual> children = new ArrayList<>();
+		
+		// uniform crossover: select each gene (bit) from one of the corresponding
+		// genes of the parents' chromosomes
+				
+		
+		
+		
+		
 		children.add(parent1.copy());
 		children.add(parent2.copy());		
 		return children;
