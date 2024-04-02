@@ -140,7 +140,7 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 	}
 
 	/**
-	 * CROSSOVER / REPRODUCTION
+	 * CROSSOVER / REPRODUCTION  -- using the Uniform Crossover
 	 */
 	private ArrayList<Individual> uniformCrossover(Individual parent1, Individual parent2) {
 		// create a list to store the offspring (children)
@@ -148,13 +148,32 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 		
 		// uniform crossover: select each gene (bit) from one of the corresponding
 		// genes of the parents' chromosomes
-				
+		// create two arrays to store the chromosome of children
+		double[] child1 = new double[parent1.chromosome.length];
+		double[] child2 = new double[parent2.chromosome.length];
 		
 		
+		// iterate of each gene (or element) in individual parents' chromosome
+		// for each gene, select randomly one of the parent's gene to be inherited 
+		// by each child
+		for(int i = 0; i < parent1.chromosome.length; i++) {
+			if(Parameters.random.nextBoolean()) {
+				child1[i] = parent1.chromosome[i];
+				child2[i] = parent2.chromosome[i];
+			} else {
+				child1[i] = parent2.chromosome[i];
+				child2[i] = parent1.chromosome[i];
+			}
+		}
 		
+		// create two child individuals using the generated chromosomes 
+		// and add them to the list of children
+		Individual children1 = new Individual();
+		Individual children2 = new Individual();
 		
-		children.add(parent1.copy());
-		children.add(parent2.copy());		
+		children.add(children1);
+		children.add(children2);	
+		
 		return children;
 	} 
 	
