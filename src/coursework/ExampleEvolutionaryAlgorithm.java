@@ -41,15 +41,15 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 			 * 
 			 */
 
-			// Select 2 Individuals from the current population. Currently returns random Individual
+			// Select 2 Individuals from the current population.
 			Individual parent1 = tournamentSelect(); 
 			Individual parent2 = tournamentSelect();
 
-			// Generate a child by crossover. Not Implemented			
+			// Generate a child by crossover			
 			ArrayList<Individual> children = uniformCrossover(parent1, parent2);			
 			
 			//mutate the offspring
-			mutate(children);
+			nonUniformMutation(children);
 			
 			// Evaluate the children
 			evaluateIndividuals(children);			
@@ -118,7 +118,7 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 	 * SELECTION -- using the Tournament selection
 	 */
 	private Individual tournamentSelect() {		
-		// select the parents individuals (which are participants) from the population
+		// select the individuals (which are participants) from the population
 		// and perform a tournament amongst them
 		ArrayList<Individual> participants = new ArrayList<>();
 		for(int i = 0; i < Parameters.popSize; i++) {
@@ -153,7 +153,7 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 		double[] child2 = new double[parent2.chromosome.length];
 		
 		
-		// iterate of each gene (or element) in individual parents' chromosome
+		// iterate each gene (or element) in individual parents' chromosome.
 		// for each gene, select randomly one of the parent's gene to be inherited 
 		// by each child
 		for(int i = 0; i < parent1.chromosome.length; i++) {
@@ -178,22 +178,29 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 	} 
 	
 	/**
-	 * Mutation
+	 * Mutation -- using non-Uniform Mutation
 	 * 
 	 * 
 	 */
-	private void mutate(ArrayList<Individual> individuals) {		
+	private void nonUniformMutation(ArrayList<Individual> individuals) {
+		// for each individual's gene in the chromosome, if a randomly
+		// generated value is less that the mutation rate, change the mutation
+		// process.
 		for(Individual individual : individuals) {
 			for (int i = 0; i < individual.chromosome.length; i++) {
-				if (Parameters.random.nextDouble() < Parameters.mutateRate) {
-					if (Parameters.random.nextBoolean()) {
-						individual.chromosome[i] += (Parameters.mutateChange);
-					} else {
-						individual.chromosome[i] -= (Parameters.mutateChange);
-					}
+				if(Parameters.random.nextDouble() < Parameters.mutateRate) {
+					
+					// change mutation and add the mutation change
+					double changeMutation = Parameters.random.nextGaussian() * Parameters.scale * Parameters.mutateChange;
+					individual.chromosome[i] += changeMutation;
+					
+					
+					// to ensure that the gene value remains within the boundaries
+					// set out for it
+					individual.chromosome[i] = Math.max(Parameters.minGene, Math.min(Parameters.maxGene, individual.chromosome[i]));
 				}
 			}
-		}		
+		}
 	}
 
 	/**
@@ -203,12 +210,21 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 	 * 
 	 */
 	private void replace(ArrayList<Individual> individuals) {
+		 // calculate and store the index of the worst individual
+		// in the current population
+		int worstIndex = getWorstIndex();
+		
+		// for each individual in the population, if it has a fitness value
+		// less than the fitness value of the worst individual in the population
+		// then replace it with the fitness of the worst individual, 
+		// else leave the current individual
 		for(Individual individual : individuals) {
-			int idx = getWorstIndex();		
-			population.set(idx, individual);
+			if(individual.fitness < population.get(worstIndex).fitness) {
+				// individual.fitness = population.get(worstIndex).fitness;
+				population.set(worstIndex, individual);
+			}
 		}		
 	}
-
 	
 
 	/**

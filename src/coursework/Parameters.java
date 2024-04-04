@@ -13,10 +13,11 @@ public class Parameters {
 	 * required to this class
 	 * 
 	 */
-	private static int numHidden = 5;
+	private static int numHidden = 5; // originally 5
 	private static int numGenes = calculateNumGenes();
 	public static double minGene = -3; // specifies minimum and maximum weight values
 	public static double maxGene = +3;
+	public static double scale = 0.9; // scale factor for non-uniform mutation added
 
 	public static int popSize = 40;
 	public static int maxEvaluations = 20000;
@@ -24,8 +25,8 @@ public class Parameters {
 	// Parameters for mutation
 	// Rate = probability of changing a gene
 	// Change = the maximum +/- adjustment to the gene value
-	public static double mutateRate = 0.01; // 0.01 mutation rate for mutation operator
-	public static double mutateChange = 0.1; // delta change for mutation operator
+	public static double mutateRate = 0.2; // 0.01 mutation rate for mutation operator (slight good success so far is 0.1)
+	public static double mutateChange = 0.1; // 0.1 delta change for mutation operator
 
 	// Random number generator used throughout the application
 	public static long seed = System.currentTimeMillis();
