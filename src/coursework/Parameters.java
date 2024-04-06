@@ -17,16 +17,16 @@ public class Parameters {
 	private static int numGenes = calculateNumGenes();
 	public static double minGene = -3; // specifies minimum and maximum weight values
 	public static double maxGene = +3;
-	public static double scale = 0.9; // scale factor for non-uniform mutation added
+	public static double scale = 0.1; // scale factor for non-uniform mutation added
 
-	public static int popSize = 40;
+	public static int popSize = 10; // orginally 40     -- Train and Test with values 10, 20, 50, 100, 200 to find optimal population size
 	public static int maxEvaluations = 20000;
 
 	// Parameters for mutation
 	// Rate = probability of changing a gene
 	// Change = the maximum +/- adjustment to the gene value
-	public static double mutateRate = 0.2; // 0.01 mutation rate for mutation operator (slight good success so far is 0.1)
-	public static double mutateChange = 0.1; // 0.1 delta change for mutation operator
+	public static double mutateRate = 0.01; // 0.01 mutation rate for mutation operator -- Train and Test values 0.01, 0.05, 0.1
+	public static double mutateChange = 0.1; // 0.1 delta change for mutation operator -- Train and Test values 0.1, 0.01
 
 	// Random number generator used throughout the application
 	public static long seed = System.currentTimeMillis();

@@ -27,6 +27,9 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 		//Record a copy of the best Individual in the population
 		best = getBest();
 		System.out.println("Best From Initialisation " + best);
+		
+		// see completed generations
+		int completedGenerations = 0;
 
 		/**
 		 * main EA processing loop
@@ -63,7 +66,8 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 			// Implemented in NN class. 
 			outputStats();
 			
-			//Increment number of completed generations			
+			//Increment number of completed generations	
+			completedGenerations++;
 		}
 
 		//save the trained network to disk
