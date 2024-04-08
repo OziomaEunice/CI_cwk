@@ -53,9 +53,9 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 			Individual parent2 = tournamentSelect();
 
 			// Generate a child by crossover			
-			//ArrayList<Individual> children = onePCrossover(parent1, parent2);
+			ArrayList<Individual> children = onePCrossover(parent1, parent2);
 			//ArrayList<Individual> children = twoPCrossover(parent1, parent2);
-			ArrayList<Individual> children = uniformCrossover(parent1, parent2);			
+			//ArrayList<Individual> children = uniformCrossover(parent1, parent2);			
 			
 			
 			//mutate the offspring

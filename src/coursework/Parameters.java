@@ -19,14 +19,14 @@ public class Parameters {
 	public static double maxGene = +3;
 	//public static double scale = 0.1; // scale factor for non-uniform mutation added
 
-	public static int popSize = 40; // orginally 40  -- Train and Test with values 50, 100, 200 to find optimal population size
+	public static int popSize = 100; // Train and Test with values 50, 100, 200 to find optimal population size
 	public static int maxEvaluations = 20000;
 
 	// Parameters for mutation
 	// Rate = probability of changing a gene
 	// Change = the maximum +/- adjustment to the gene value
-	public static double mutateRate = 0.08; // 0.01 mutation rate for mutation operator -- Train and Test values 0.001, 0.01, 0.05, 0.1
-	public static double mutateChange = 0.5; // 0.1 delta change for mutation operator -- Train and Test values 0.1, 0.5
+	public static double mutateRate = 0.08; // mutation rate for mutation operator -- Train and Test values 0.01, 0.05, 0.08, 0.1
+	public static double mutateChange = 0.5; // delta change for mutation operator -- Train and Test values 0.1, 0.5
 
 	// Random number generator used throughout the application
 	public static long seed = System.currentTimeMillis();
