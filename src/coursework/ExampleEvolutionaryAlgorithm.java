@@ -16,6 +16,10 @@ import model.NeuralNetwork;
 public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 	
 
+	// Define Leaky ReLU with samll slope for negative values
+	private static final double Alpha = 0.1;
+	
+	
 	/**
 	 * The Main Evolutionary Loop
 	 */
@@ -49,10 +53,13 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 			Individual parent2 = tournamentSelect();
 
 			// Generate a child by crossover			
+			//ArrayList<Individual> children = onePCrossover(parent1, parent2);
+			//ArrayList<Individual> children = twoPCrossover(parent1, parent2);
 			ArrayList<Individual> children = uniformCrossover(parent1, parent2);			
 			
+			
 			//mutate the offspring
-			nonUniformMutation(children);
+			mutate(children);
 			
 			// Evaluate the children
 			evaluateIndividuals(children);			
@@ -144,7 +151,82 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 	}
 
 	/**
-	 * CROSSOVER / REPRODUCTION  -- using the Uniform Crossover
+	 * CROSSOVER / REPRODUCTION  -- Using One-Point Crossover
+	 * 
+	 * **/
+	private ArrayList<Individual>  onePCrossover(Individual parent1, Individual parent2){
+		
+		ArrayList<Individual> children = new ArrayList<>();
+		
+		int crossPoint = Parameters.random.nextInt(parent1.chromosome.length); // choose crosspoint randomly
+		
+		Individual child = new Individual();
+					
+		// copy first part of child from parent1, and second part
+		// from parent2
+		for (int j = 0; j < crossPoint; j++) {
+			child.chromosome[j] = parent1.chromosome[j];
+		}
+		for (int j = crossPoint; j < parent1.chromosome.length; j++) {
+			child.chromosome[j] = parent2.chromosome[j];
+		}
+		
+		children.add(child);
+		
+		return children;
+	}
+	
+	
+	/**
+	 * -- Using Two-Point Crossover
+	 */
+	private ArrayList<Individual> twoPCrossover(Individual parent1, Individual parent2){
+		
+		ArrayList<Individual> children = new ArrayList<>();
+
+		// choose 1st and 2nd crosspoints randomly
+		int crossPoint1 = Parameters.random.nextInt(parent1.chromosome.length); 
+		int crossPoint2 = Parameters.random.nextInt(parent1.chromosome.length); 
+		
+		Individual child = new Individual();
+		
+		// to ensure that the crossover point between the
+		// chromosomes are different
+		while (crossPoint1 == crossPoint2) {crossPoint2 = Parameters.random.nextInt(parent1.chromosome.length);}
+		
+		// ensure that the first crosspoint comes before the second one
+		if (crossPoint1 > crossPoint2) {
+			int temporal = crossPoint1;
+			crossPoint1 = crossPoint2;
+			crossPoint2 = temporal;
+		}
+		
+		// create two child individuals using the generated chromosomes 
+		// and add them to the list of children
+		Individual children1 = new Individual();
+		Individual children2 = new Individual();
+		
+		for(int i = 0; i < parent1.chromosome.length; i++) {
+			if(i < crossPoint1 || i >= crossPoint2) {
+				children1.chromosome[i] = parent1.chromosome[i];
+				children2.chromosome[i] = parent2.chromosome[i];
+			} else {
+				children1.chromosome[i] = parent2.chromosome[i];
+				children2.chromosome[i] = parent1.chromosome[i];
+			}
+		}
+		
+		
+		
+		children.add(children1);
+		children.add(children2);	
+		
+		return children;
+	}
+	
+	
+	/**
+	 * -- using the Uniform Crossover
 	 */
 	private ArrayList<Individual> uniformCrossover(Individual parent1, Individual parent2) {
 		// create a list to store the offspring (children)
@@ -179,32 +261,58 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 		children.add(children2);	
 		
 		return children;
-	} 
+	}
+	
+	
+	
+	
 	
 	/**
 	 * Mutation -- using non-Uniform Mutation
 	 * 
 	 * 
 	 */
-	private void nonUniformMutation(ArrayList<Individual> individuals) {
-		// for each individual's gene in the chromosome, if a randomly
-		// generated value is less that the mutation rate, change the mutation
-		// process.
+//	private void nonUniformMutation(ArrayList<Individual> individuals) {
+//		// for each individual's gene in the chromosome, if a randomly
+//		// generated value is less that the mutation rate, change the mutation
+//		// process.
+//		for(Individual individual : individuals) {
+//			for (int i = 0; i < individual.chromosome.length; i++) {
+//				if(Parameters.random.nextDouble() < Parameters.mutateRate) {
+//					
+//					// change mutation and add the mutation change
+//					double changeMutation = Parameters.random.nextGaussian() * Parameters.scale * Parameters.mutateChange;
+//					individual.chromosome[i] += changeMutation;
+//					
+//					
+//					// to ensure that the gene value remains within the boundaries
+//					// set out for it
+//					individual.chromosome[i] = Math.max(Parameters.minGene, Math.min(Parameters.maxGene, individual.chromosome[i]));
+//				}
+//			}
+//		}
+//	}
+	
+	/**
+	 * Mutation -- using a Uniform Mutation
+	 */
+	/**
+	 * Mutation
+	 * 
+	 * 
+	 */
+	private void mutate(ArrayList<Individual> individuals) {		
 		for(Individual individual : individuals) {
 			for (int i = 0; i < individual.chromosome.length; i++) {
-				if(Parameters.random.nextDouble() < Parameters.mutateRate) {
-					
-					// change mutation and add the mutation change
-					double changeMutation = Parameters.random.nextGaussian() * Parameters.scale * Parameters.mutateChange;
-					individual.chromosome[i] += changeMutation;
-					
-					
-					// to ensure that the gene value remains within the boundaries
-					// set out for it
-					individual.chromosome[i] = Math.max(Parameters.minGene, Math.min(Parameters.maxGene, individual.chromosome[i]));
+				if (Parameters.random.nextDouble() < Parameters.mutateRate) {
+					if (Parameters.random.nextBoolean()) {
+						individual.chromosome[i] += (Parameters.mutateChange);
+					} else {
+						individual.chromosome[i] -= (Parameters.mutateChange);
+					}
 				}
 			}
-		}
+		}		
 	}
 
 	/**
@@ -251,13 +359,20 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 		return idx;
 	}	
 
+//	@Override
+//	public double activationFunction(double x) {
+//		if (x < -20.0) {
+//			return -1.0;
+//		} else if (x > 20.0) {
+//			return 1.0;
+//		}
+//		return Math.tanh(x);
+//	}
+	
+	
+	// using Leaky ReLU as the activation function	
 	@Override
 	public double activationFunction(double x) {
-		if (x < -20.0) {
-			return -1.0;
-		} else if (x > 20.0) {
-			return 1.0;
-		}
-		return Math.tanh(x);
+		return x >= 0 ? x : Alpha * x;
 	}
 }
