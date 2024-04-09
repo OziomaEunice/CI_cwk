@@ -8,9 +8,7 @@ import model.LunarParameters.DataSet;
 import model.NeuralNetwork;
 
 /**
- * Implements a basic Evolutionary Algorithm to train a Neural Network
- * 
- * You Can Use This Class to implement your EA or implement your own class that extends {@link NeuralNetwork} 
+ * Implements Genetic Algorithm to train a Neural Network
  * 
  */
 public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
@@ -36,17 +34,10 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 		int completedGenerations = 0;
 
 		/**
-		 * main EA processing loop
+		 * main GA processing loop
 		 */		
 		
 		while (evaluations < Parameters.maxEvaluations) {
-
-			/**
-			 * this is a skeleton EA - you need to add the methods.
-			 * You can also change the EA if you want 
-			 * You must set the best Individual at the end of a run
-			 * 
-			 */
 
 			// Select 2 Individuals from the current population.
 			Individual parent1 = tournamentSelect(); 
@@ -54,13 +45,15 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 
 			// Generate a child by crossover			
 			//ArrayList<Individual> children = onePCrossover(parent1, parent2);
-			//ArrayList<Individual> children = twoPCrossover(parent1, parent2);
-			ArrayList<Individual> children = uniformCrossover(parent1, parent2);			
+			ArrayList<Individual> children = twoPCrossover(parent1, parent2);
+			//ArrayList<Individual> children = uniformCrossover(parent1, parent2);			
 			
 			
-			//mutate the offspring
-			mutate(children);
+			// mutate the offspring
+			//mutate(children);
 			//nonUniformMutation(children);
+			uniformMutation(children);
+			
 			
 			// Evaluate the children
 			evaluateIndividuals(children);			
@@ -125,6 +118,7 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 		evaluateIndividuals(population);
 		return population;
 	}
+	
 
 	/**
 	 * SELECTION -- using the Tournament selection
@@ -151,6 +145,7 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 		return fittest.copy(); // return a copy of the fittest individual
 	}
 
+	
 	/**
 	 * CROSSOVER / REPRODUCTION  -- Using One-Point Crossover
 	 * 
@@ -217,8 +212,6 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 			}
 		}
 		
-		
-		
 		children.add(children1);
 		children.add(children2);	
 		
@@ -227,7 +220,7 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 	
 	
 	/**
-	 * -- using the Uniform Crossover
+	 * -- using Uniform Crossover
 	 */
 	private ArrayList<Individual> uniformCrossover(Individual parent1, Individual parent2) {
 		// create a list to store the offspring (children)
@@ -261,11 +254,27 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 	
 	
 	
+	/**
+	 * Mutation
+	 * 
+	 */
+	private void mutate(ArrayList<Individual> individuals) {		
+		for(Individual individual : individuals) {
+			for (int i = 0; i < individual.chromosome.length; i++) {
+				if (Parameters.random.nextDouble() < Parameters.mutateRate) {
+					if (Parameters.random.nextBoolean()) {
+						individual.chromosome[i] += (Parameters.mutateChange);
+					} else {
+						individual.chromosome[i] -= (Parameters.mutateChange);
+					}
+				}
+			}
+		}		
+	}
 	
 	
 	/**
 	 * Mutation -- using non-Uniform Mutation
-	 * 
 	 * 
 	 */
 	private void nonUniformMutation(ArrayList<Individual> individuals) {
@@ -295,24 +304,36 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 	/**
 	 * Mutation -- using a Uniform Mutation
 	 */
-	/**
-	 * Mutation
-	 * 
-	 * 
-	 */
-	private void mutate(ArrayList<Individual> individuals) {		
+	private void uniformMutation(ArrayList<Individual> individuals) {
+		// for each individual's gene in the chromosome, if a randomly
+		// generated value is less that the mutation rate, change the mutation
+		// process.
 		for(Individual individual : individuals) {
 			for (int i = 0; i < individual.chromosome.length; i++) {
-				if (Parameters.random.nextDouble() < Parameters.mutateRate) {
-					if (Parameters.random.nextBoolean()) {
-						individual.chromosome[i] += (Parameters.mutateChange);
+				if(Parameters.random.nextDouble() < Parameters.mutateRate) {
+					
+					// generate and store a small value for mutation using 
+					// mutateChange to control the magnitude of mutation
+					// ------
+					// random value will be within the range of -1 and 1 so that
+					// mutation can increase or decrease the gene value with equal probability
+					double m = (Parameters.random.nextDouble() * 2 - 1) * Parameters.mutateChange;
+					
+					// Apply mutation to the gene of the individual chromosome
+					if(Parameters.random.nextBoolean()) {
+						
+						individual.chromosome[i] += m;
+					
 					} else {
-						individual.chromosome[i] -= (Parameters.mutateChange);
+						
+						individual.chromosome[i] -= m;
 					}
 				}
 			}
-		}		
+		}
 	}
+	
+	
 
 	/**
 	 * 
