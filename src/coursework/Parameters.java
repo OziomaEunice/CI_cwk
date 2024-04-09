@@ -26,7 +26,7 @@ public class Parameters {
 	// Rate = probability of changing a gene
 	// Change = the maximum +/- adjustment to the gene value
 	public static double mutateRate = 0.08; // mutation rate for mutation operator -- Train and Test values 0.01, 0.05, 0.08, 0.1
-	public static double mutateChange = 0.5; // delta change for mutation operator -- Train and Test values 0.1, 0.5
+	public static double mutateChange = 1.5; // delta change for mutation operator -- Train and Test values 0.1, 0.5, 1.5
 
 	// Random number generator used throughout the application
 	public static long seed = System.currentTimeMillis();

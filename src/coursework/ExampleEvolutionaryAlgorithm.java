@@ -53,13 +53,14 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 			Individual parent2 = tournamentSelect();
 
 			// Generate a child by crossover			
-			ArrayList<Individual> children = onePCrossover(parent1, parent2);
+			//ArrayList<Individual> children = onePCrossover(parent1, parent2);
 			//ArrayList<Individual> children = twoPCrossover(parent1, parent2);
-			//ArrayList<Individual> children = uniformCrossover(parent1, parent2);			
+			ArrayList<Individual> children = uniformCrossover(parent1, parent2);			
 			
 			
 			//mutate the offspring
 			mutate(children);
+			//nonUniformMutation(children);
 			
 			// Evaluate the children
 			evaluateIndividuals(children);			
@@ -234,31 +235,26 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 		
 		// uniform crossover: select each gene (bit) from one of the corresponding
 		// genes of the parents' chromosomes
-		// create two arrays to store the chromosome of children
-		double[] child1 = new double[parent1.chromosome.length];
-		double[] child2 = new double[parent2.chromosome.length];
-		
+		// create two child individuals using the generated chromosomes 
+		// and add them to the list of children
+		Individual child1 = new Individual();
+		Individual child2 = new Individual();
 		
 		// iterate each gene (or element) in individual parents' chromosome.
 		// for each gene, select randomly one of the parent's gene to be inherited 
 		// by each child
 		for(int i = 0; i < parent1.chromosome.length; i++) {
 			if(Parameters.random.nextBoolean()) {
-				child1[i] = parent1.chromosome[i];
-				child2[i] = parent2.chromosome[i];
+				child1.chromosome[i] = parent1.chromosome[i];
+				child2.chromosome[i] = parent2.chromosome[i];
 			} else {
-				child1[i] = parent2.chromosome[i];
-				child2[i] = parent1.chromosome[i];
+				child1.chromosome[i] = parent2.chromosome[i];
+				child2.chromosome[i] = parent1.chromosome[i];
 			}
 		}
 		
-		// create two child individuals using the generated chromosomes 
-		// and add them to the list of children
-		Individual children1 = new Individual();
-		Individual children2 = new Individual();
-		
-		children.add(children1);
-		children.add(children2);	
+		children.add(child1);
+		children.add(child2);	
 		
 		return children;
 	}
@@ -272,26 +268,29 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 	 * 
 	 * 
 	 */
-//	private void nonUniformMutation(ArrayList<Individual> individuals) {
-//		// for each individual's gene in the chromosome, if a randomly
-//		// generated value is less that the mutation rate, change the mutation
-//		// process.
-//		for(Individual individual : individuals) {
-//			for (int i = 0; i < individual.chromosome.length; i++) {
-//				if(Parameters.random.nextDouble() < Parameters.mutateRate) {
-//					
-//					// change mutation and add the mutation change
-//					double changeMutation = Parameters.random.nextGaussian() * Parameters.scale * Parameters.mutateChange;
-//					individual.chromosome[i] += changeMutation;
-//					
-//					
-//					// to ensure that the gene value remains within the boundaries
-//					// set out for it
-//					individual.chromosome[i] = Math.max(Parameters.minGene, Math.min(Parameters.maxGene, individual.chromosome[i]));
-//				}
-//			}
-//		}
-//	}
+	private void nonUniformMutation(ArrayList<Individual> individuals) {
+		// for each individual's gene in the chromosome, if a randomly
+		// generated value is less that the mutation rate, change the mutation
+		// process.
+		for(Individual individual : individuals) {
+			for (int i = 0; i < individual.chromosome.length; i++) {
+				if(Parameters.random.nextDouble() < Parameters.mutateRate) {
+					
+					// change mutation and add the mutation change
+					double changeMutation = Parameters.random.nextGaussian() * Parameters.mutateChange;
+					
+					if(Parameters.random.nextBoolean()) {
+					
+						individual.chromosome[i] += changeMutation;
+					
+					} else {
+						
+						individual.chromosome[i] -= changeMutation;
+					}
+				}
+			}
+		}
+	}
 	
 	/**
 	 * Mutation -- using a Uniform Mutation
