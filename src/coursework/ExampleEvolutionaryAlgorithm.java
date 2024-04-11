@@ -14,7 +14,7 @@ import model.NeuralNetwork;
 public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 	
 
-	// Define Leaky ReLU with samll slope for negative values
+	// Define Leaky ReLU with small slope for negative values
 	private static final double Alpha = 0.1;
 	
 	
@@ -42,6 +42,8 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 			// Select 2 Individuals from the current population.
 			Individual parent1 = tournamentSelect(); 
 			Individual parent2 = tournamentSelect();
+			//Individual parent1 = rouletteWheel(); 
+			//Individual parent2 = rouletteWheel();
 
 			// Generate a child by crossover			
 			//ArrayList<Individual> children = onePCrossover(parent1, parent2);
@@ -121,7 +123,9 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 	
 
 	/**
-	 * SELECTION -- using the Tournament selection
+	 * ---------------SELECTION--------------- 
+	 *      using the Tournament selection
+	 *      
 	 */
 	private Individual tournamentSelect() {		
 		// select the individuals (which are participants) from the population
@@ -147,7 +151,47 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 
 	
 	/**
-	 * CROSSOVER / REPRODUCTION  -- Using One-Point Crossover
+	 * * ---------------SELECTION--------------- 
+	 *     using the Roulette Wheel selection
+	 *     
+	 */
+	private Individual rouletteWheel() {		
+				
+		// compute total fitness
+		double totFitness = 0.0;
+		
+		for(Individual individual : population) {
+			// sum all the fitness values of all individuals
+			totFitness += individual.fitness;
+		}
+		
+		// construct a roulette wheel and assign a portion of the wheel to
+		// each individual based on its selection probability.
+		// select the probabilities from the population
+		double accumulatedProbabilities = 0.0;
+		double spinWheel = Parameters.random.nextDouble(); // spin the wheel
+		
+		for(Individual individual : population) {
+			double selectionProbability = individual.fitness / totFitness;
+			accumulatedProbabilities += selectionProbability; // accumulates all the probabilities
+			
+
+			// selects an individual by checking if the spin value in the wheel
+			// is less or equal to the accumulated probability
+			if (spinWheel <= accumulatedProbabilities) {
+	            return individual;
+	        }
+		}
+		
+		return population.get(Parameters.popSize - 1); // if no individual is selected then get the last individual in population
+	}
+	
+	
+	
+	
+	/**
+	 * ---------------CROSSOVER---------------
+	 *         Using One-Point Crossover
 	 * 
 	 * **/
 	private ArrayList<Individual>  onePCrossover(Individual parent1, Individual parent2){
@@ -174,7 +218,9 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 	
 	
 	/**
-	 * -- Using Two-Point Crossover
+	 * ---------------CROSSOVER---------------
+	 *        Using Two-Point Crossover
+	 * 
 	 */
 	private ArrayList<Individual> twoPCrossover(Individual parent1, Individual parent2){
 		
@@ -220,7 +266,9 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 	
 	
 	/**
-	 * -- using Uniform Crossover
+	 * ---------------CROSSOVER---------------
+	 *         using Uniform Crossover
+	 *         
 	 */
 	private ArrayList<Individual> uniformCrossover(Individual parent1, Individual parent2) {
 		// create a list to store the offspring (children)
@@ -255,8 +303,9 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 	
 	
 	/**
-	 * Mutation
-	 * 
+	 * ---------------Mutation---------------
+	 *    Basic implementation for mutation
+	 *    
 	 */
 	private void mutate(ArrayList<Individual> individuals) {		
 		for(Individual individual : individuals) {
@@ -274,7 +323,8 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 	
 	
 	/**
-	 * Mutation -- using non-Uniform Mutation
+	 * ---------------Mutation---------------
+	 *       using non-Uniform Mutation
 	 * 
 	 */
 	private void nonUniformMutation(ArrayList<Individual> individuals) {
@@ -301,8 +351,10 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 		}
 	}
 	
+	
 	/**
-	 * Mutation -- using a Uniform Mutation
+	 * ---------------Mutation---------------
+	 * 		   using a Uniform Mutation
 	 */
 	private void uniformMutation(ArrayList<Individual> individuals) {
 		// for each individual's gene in the chromosome, if a randomly
@@ -336,9 +388,8 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 	
 
 	/**
-	 * 
+	 * ---------------Replacement---------------
 	 * Replaces the worst member of the population 
-	 * (regardless of fitness)
 	 * 
 	 */
 	private void replace(ArrayList<Individual> individuals) {
@@ -359,6 +410,7 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 	}
 	
 
+	
 	/**
 	 * Returns the index of the worst member of the population
 	 * @return
@@ -379,6 +431,7 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 		return idx;
 	}	
 
+	// using Tanh as the activation function
 //	@Override
 //	public double activationFunction(double x) {
 //		if (x < -20.0) {
