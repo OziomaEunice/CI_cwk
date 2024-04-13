@@ -130,23 +130,23 @@ public class ExampleEvolutionaryAlgorithm extends NeuralNetwork {
 	private Individual tournamentSelect() {		
 		// select the individuals (which are participants) from the population
 		// and perform a tournament amongst them
-		ArrayList<Individual> participants = new ArrayList<>();
+		ArrayList<Individual> individualParticipants = new ArrayList<>();
 		for(int i = 0; i < Parameters.popSize; i++) {
-			participants.add(population.get(Parameters.random.nextInt(Parameters.popSize)));
+			individualParticipants.add(population.get(Parameters.random.nextInt(Parameters.popSize)));
 		}
 		
 		
 		// find the fittest individual
 		// and if the individual (or participant) has the fittest 
 		// chromosome, select it
-		Individual fittest = null;
-		for(Individual participant : participants) {
-			if(fittest == null || participant.fitness < fittest.fitness) {
-				fittest = participant;
+		Individual theFittestIndividual = null;
+		for(Individual participant : individualParticipants) {
+			if(theFittestIndividual == null || participant.fitness < theFittestIndividual.fitness) {
+				theFittestIndividual = participant;
 			}
 		}
 		
-		return fittest.copy(); // return a copy of the fittest individual
+		return theFittestIndividual.copy(); // return a copy of the fittest individual
 	}
 
 	
